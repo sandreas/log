@@ -2,7 +2,10 @@ package log
 
 import (
 	"os"
+	"sync"
 )
+
+var mu sync.Mutex
 
 func NewFileWrapper(filename string) *FileWrapper {
 	return &FileWrapper{
@@ -19,6 +22,8 @@ type FileWrapper struct {
 }
 
 func (fw *FileWrapper) Write(b []byte) (int, error) {
+	mu.Lock()
+	defer mu.Unlock()
 	if fw.err != nil {
 		return -1, fw.err
 	}
